@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Notes App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f9f9f9;
+      text-align: center;
+    }
+
+    textarea {
+      width: 80%;
+      height: 200px;
+      padding: 10px;
+      font-size: 16px;
+      resize: none;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Simple Notes App</h1>
+  <textarea id="noteArea" placeholder="Write your notes here..."></textarea>
+
+  <div class="buttons">
+    <button onclick="toggleEdit()">Edit</button>
+    <button onclick="eraseNote()">Erase</button>
+    <button onclick="backspace()">Backspace</button>
+    <button onclick="addSpace()">Space</button>
+  </div>
+
+  <script>
+    const noteArea = document.getElementById('noteArea');
+    let isEditable = true;
+
+    function toggleEdit() {
+      isEditable = !isEditable;
+      noteArea.readOnly = !isEditable;
+      alert(isEditable ? "Editing enabled." : "Editing disabled.");
+    }
+
+    function eraseNote() {
+      noteArea.value = "";
+    }
+
+    function backspace() {
+      noteArea.value = noteArea.value.slice(0, -1);
+    }
+
+    function addSpace() {
+      noteArea.value += " ";
+    }
+  </script>
+
+</body>
+</html>
