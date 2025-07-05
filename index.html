@@ -2,69 +2,151 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Simple Notes App</title>
+  <title>Simple Notepad App</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
       background-color: #f9f9f9;
-      text-align: center;
+      color: #000;
+      transition: background-color 0.3s, color 0.3s;
     }
 
-    textarea {
-      width: 80%;
-      height: 200px;
+    #menu {
+      background-color: #333;
+      color: white;
       padding: 10px;
-      font-size: 16px;
-      resize: none;
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
 
-    .buttons {
-      margin-top: 20px;
-    }
-
-    button {
-      margin: 5px;
-      padding: 10px 20px;
-      font-size: 16px;
+    #menu button {
+      background-color: #555;
+      border: none;
+      color: white;
+      padding: 8px 12px;
       cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    #menu button:hover {
+      background-color: #777;
+    }
+
+    #notepad {
+      width: 100%;
+      height: calc(100vh - 50px);
+      padding: 15px;
+      font-size: 16px;
+      border: none;
+      resize: none;
+      box-sizing: border-box;
+      outline: none;
+      background-color: white;
+      color: black;
+      font-family: Consolas, monospace;
+    }
+
+    body.dark {
+      background-color: #1e1e1e;
+      color: #ddd;
+    }
+
+    body.dark #notepad {
+      background-color: #2e2e2e;
+      color: #ddd;
+    }
+
+    body.dark #menu {
+      background-color: #111;
+    }
+
+    body.dark #menu button {
+      background-color: #333;
+    }
+
+    body.dark #menu button:hover {
+      background-color: #444;
     }
   </style>
 </head>
 <body>
 
-  <h1>Simple Notes App</h1>
-  <textarea id="noteArea" placeholder="Write your notes here..."></textarea>
-
-  <div class="buttons">
-    <button onclick="toggleEdit()">Edit</button>
-    <button onclick="eraseNote()">Erase</button>
-    <button onclick="backspace()">Backspace</button>
-    <button onclick="addSpace()">Space</button>
+  <div id="menu">
+    <button onclick="newNote()">New</button>
+    <button onclick="saveNote()">Save</button>
+    <button onclick="loadNote()">Load</button>
+    <button onclick="clearNote()">Clear</button>
+    <button onclick="toggleDarkMode()">🌙</button>
   </div>
 
+  <textarea id="notepad" placeholder="Start typing here..."></textarea>
+  <input type="file" id="fileInput" accept=".txt" style="display: none;" />
+
   <script>
-    const noteArea = document.getElementById('noteArea');
-    let isEditable = true;
-
-    function toggleEdit() {
-      isEditable = !isEditable;
-      noteArea.readOnly = !isEditable;
-      alert(isEditable ? "Editing enabled." : "Editing disabled.");
+    // Create a new note
+    function newNote() {
+      if (confirm("Start a new note? Unsaved work will be lost.")) {
+        document.getElementById("notepad").value = "";
+      }
     }
 
-    function eraseNote() {
-      noteArea.value = "";
+    // Save note to .txt file
+    function saveNote() {
+      const text = document.getElementById("notepad").value;
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "note.txt";
+      link.click();
     }
 
-    function backspace() {
-      noteArea.value = noteArea.value.slice(0, -1);
+    // Load .txt file into notepad
+    function loadNote() {
+      const fileInput = document.getElementById("fileInput");
+      fileInput.click();
+
+      fileInput.onchange = () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById("notepad").value = e.target.result;
+        };
+        reader.readAsText(file);
+      };
     }
 
-    function addSpace() {
-      noteArea.value += " ";
+    // Clear the note
+    function clearNote() {
+      if (confirm("Clear the note?")) {
+        document.getElementById("notepad").value = "";
+      }
     }
+
+    // Toggle dark/light mode
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener("keydown", function (e) {
+      if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        saveNote();
+      } else if (e.ctrlKey && e.key === 'o') {
+        e.preventDefault();
+        loadNote();
+      } else if (e.ctrlKey && e.key === 'n') {
+        e.preventDefault();
+        newNote();
+      }
+    });
   </script>
 
 </body>
 </html>
+
+
